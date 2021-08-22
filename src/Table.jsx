@@ -12,7 +12,6 @@ const Table = () => {
   let j = 1;
   for (let i = 0; i < aData.length; i++) {
     if (aData[i + 1] && aData[i].bananas === aData[i + 1].bananas) {
-      ///if n of bananas same as next, ranking is same
       aData[i].ranking = j;
     } else {
       aData[i].ranking = j;
@@ -33,6 +32,8 @@ const Table = () => {
     if (isMatched.length === 1 && !uids.includes(isMatched[0].uid)) {
       console.log(topTen.concat(isMatched));
       setDisplay(topTen.concat(isMatched));
+      setError(false);
+    } else if (isMatched.length === 1 && uids.includes(isMatched[0].uid)) {
       setError(false);
     } else {
       setError(true);
