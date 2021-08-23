@@ -1,37 +1,43 @@
 import React, { useState, useEffect } from "react";
 
-import Data from "./input/leaderboard.json";
+import JsonData from "./input/leaderboard.json";
 
 const Table = () => {
   const [search, setSearch] = useState("");
-  const aData = Object.values(Data);
+  const PeopleData = Object.values(JsonData);
   const [error, setError] = useState(false);
   const [display, setDisplay] = useState([]);
 
-  aData.sort((a, b) => (a.bananas > b.bananas ? -1 : 1)); //sorted data
-  let j = 1;
-  for (let i = 0; i < aData.length; i++) {
-    if (aData[i + 1] && aData[i].bananas === aData[i + 1].bananas) {
-      aData[i].ranking = j;
+  PeopleData.sort((a, b) => (a.bananas > b.bananas ? -1 : 1));
+
+  let rank = 1;
+
+  for (let i = 0; i < PeopleData.length; i++) {
+    if (
+      PeopleData[i + 1] &&
+      PeopleData[i].bananas === PeopleData[i + 1].bananas
+    ) {
+      PeopleData[i].ranking = rank;
     } else {
-      aData[i].ranking = j;
-      j++;
+      PeopleData[i].ranking = rank;
+      rank++;
     }
   }
 
-  const sortedData = aData.slice(0, 10);
-  const topTen = aData.slice(0, 9);
+  const topTen = PeopleData.slice(0, 10);
+  const topNine = PeopleData.slice(0, 9);
+
   useEffect(() => {
-    setDisplay(sortedData);
-    const isMatched = aData.filter((item) => {
+    setDisplay(topTen);
+    const isMatched = PeopleData.filter((item) => {
       return item.uid === search;
     });
 
-    const uids = topTen.map((i) => i.uid);
+    const uids = topNine.map((i) => i.uid);
 
     if (isMatched.length === 1 && !uids.includes(isMatched[0].uid)) {
-      console.log(topTen.concat(isMatched));
-      setDisplay(topTen.concat(isMatched));
+      console.log(topNine.concat(isMatched));
+      setDisplay(topNine.concat(isMatched));
       setError(false);
     } else if (isMatched.length === 1 && uids.includes(isMatched[0].uid)) {
       setError(false);
@@ -44,11 +50,11 @@ const Table = () => {
     setSearch(e.target.value);
   };
 
-  display.map((data, i, e) => {
+  display.map((data) => {
     if (data.uid === search) {
-      data.isCurrentUser = "true";
+      data.isCurrentUser = "yes";
     } else {
-      data.isCurrentUser = "false";
+      data.isCurrentUser = "no";
     }
   });
 
@@ -59,6 +65,7 @@ const Table = () => {
         value={search}
         preventdefault
         onChange={handleChange}
+        placeholder="Enter ID"
       ></input>
       <h1>
         {error &&
@@ -70,7 +77,7 @@ const Table = () => {
         <th>Rank</th>
         <th>Number of bananas</th>
         <th>isCurrentUser?</th>
-        {display.map((data, i, e) => {
+        {display.map((data) => {
           return (
             <tr>
               <td>{data.name}</td>
